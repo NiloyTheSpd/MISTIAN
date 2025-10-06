@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISTIAN - How Well Do You Know MIST?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-card {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .fade-out {
+            animation: fadeOut 0.5s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white selection:bg-cyan-500 selection:text-white">
+
+    <!-- Background Gradient -->
+    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-black z-0"></div>
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-cyan-900/30 via-transparent to-transparent z-0"></div>
+    <div class="absolute bottom-0 left-0 w-1/3 h-1/2 bg-gradient-to-tr from-indigo-900/30 via-transparent to-transparent z-0"></div>
+
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-4 z-10">
+
+        <!-- Header -->
+        <header class="w-full max-w-5xl mx-auto py-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-center tracking-tight">
+                M<span class="text-cyan-400">I</span>ST<span class="text-cyan-400">I</span>AN
+            </h1>
+            <p class="text-center text-gray-400 mt-1">The MIST Knowledge Challenge</p>
+        </header>
+
+        <main class="w-full flex-grow flex items-center justify-center">
+            
+            <!-- Start Screen -->
+            <section id="start-screen" class="text-center fade-in">
+                <img src="https://placehold.co/600x400/000000/FFFFFF?text=MIST+Campus&font=inter" alt="MIST Campus" class="w-48 h-48 object-cover rounded-full mx-auto mb-6 border-4 border-gray-700 shadow-lg">
+                <h2 class="text-4xl md:text-5xl font-extrabold mb-4">How well do you know MIST?</h2>
+                <p class="max-w-xl mx-auto text-gray-300 mb-8">
+                    Take this short quiz to test your knowledge about the Military Institute of Science and Technology. Get a grade based on your score!
+                </p>
+                <button id="start-quiz-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-cyan-500/30 transition-all duration-300 transform hover:scale-105">
+                    Start the Challenge
+                </button>
+            </section>
+
+            <!-- Quiz Section -->
+            <section id="quiz-section" class="hidden w-full max-w-2xl">
+                <div class="bg-gray-800/50 quiz-card border border-gray-700 rounded-2xl shadow-2xl p-6 md:p-8">
+                    <div id="quiz-header" class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-sm text-gray-400">Question <span id="question-number">1</span> of <span id="total-questions">10</span></p>
+                            <p id="timer" class="text-sm font-semibold text-cyan-400">Time: 00:00</p>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5">
+                            <div id="progress-bar" class="bg-cyan-500 h-2.5 rounded-full transition-all duration-500" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <h3 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 min-h-[6rem]">Question text goes here...</h3>
+                    
+                    <div id="options-container" class="space-y-4 mb-8">
+                        <!-- Options will be injected by JS -->
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button id="prev-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Previous
+                        </button>
+                        <button id="next-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-300 transform hover:scale-105">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Result Screen -->
+            <section id="result-screen" class="hidden text-center">
+                <div class="bg-gray-800/50 quiz-card border border-gray-700 rounded-2xl shadow-2xl p-8 md:p-12">
+                    <h2 id="result-title" class="text-3xl font-bold mb-2 text-cyan-400">Excellent!</h2>
+                    <p id="result-subtitle" class="text-gray-300 mb-6">You are a true MISTIAN.</p>
+                    
+                    <div class="relative w-40 h-40 mx-auto mb-6 flex items-center justify-center">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <!-- Background circle -->
+                            <circle class="text-gray-700" stroke-width="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                            <!-- Progress circle -->
+                            <circle id="score-circle" class="text-cyan-500 transition-all duration-1000" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" style="stroke-dasharray: 283; stroke-dashoffset: 283;" />
+                        </svg>
+                        <span id="score-text" class="absolute text-4xl font-extrabold">0%</span>
+                    </div>
+
+                    <p class="text-lg text-gray-200">You answered <span id="correct-answers" class="font-bold text-white">0</span> out of <span id="total-questions-result" class="font-bold text-white">0</span> questions correctly.</p>
+                    <p class="text-gray-400 text-sm mb-8">Quiz completed in <span id="time-taken">00:00</span>.</p>
+
+                    <button id="restart-quiz-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-cyan-500/30 transition-all duration-300 transform hover:scale-105">
+                        Try Again
+                    </button>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="w-full max-w-5xl mx-auto py-6 text-center text-gray-500">
+            <p>&copy; 2024 MISTIAN. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const startScreen = document.getElementById('start-screen');
+            const quizSection = document.getElementById('quiz-section');
+            const resultScreen = document.getElementById('result-screen');
+            const startQuizBtn = document.getElementById('start-quiz-btn');
+            const restartQuizBtn = document.getElementById('restart-quiz-btn');
+            const questionNumberEl = document.getElementById('question-number');
+            const totalQuestionsEl = document.getElementById('total-questions');
+            const progressBar = document.getElementById('progress-bar');
+            const questionTextEl = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const nextBtn = document.getElementById('next-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const timerEl = document.getElementById('timer');
+            
+            // Result screen elements
+            const resultTitle = document.getElementById('result-title');
+            const resultSubtitle = document.getElementById('result-subtitle');
+            const scoreCircle = document.getElementById('score-circle');
+            const scoreText = document.getElementById('score-text');
+            const correctAnswersEl = document.getElementById('correct-answers');
+            const totalQuestionsResultEl = document.getElementById('total-questions-result');
+            const timeTakenEl = document.getElementById('time-taken');
+
+            // Quiz Data
+            const quizData = [
+                {
+                    question: "In which year was MIST established?",
+                    options: ["1995", "1998", "2000", "2002"],
+                    answer: 1
+                },
+                {
+                    question: "What is the motto of MIST?",
+                    options: ["Excellence Through Knowledge", "Knowledge is Power", "Technology for Advancement", "Innovate to Elevate"],
+                    answer: 2
+                },
+                {
+                    question: "MIST is located in which Cantonment?",
+                    options: ["Dhaka Cantonment", "Savar Cantonment", "Mirpur Cantonment", "Gazipur Cantonment"],
+                    answer: 2
+                },
+                {
+                    question: "MIST is affiliated with which university?",
+                    options: ["University of Dhaka", "BUET", "Dhaka University of Engineering & Technology", "Bangladesh University of Professionals (BUP)"],
+                    answer: 3
+                },
+                {
+                    question: "How many undergraduate departments are currently at MIST?",
+                    options: ["8", "10", "12", "14"],
+                    answer: 2 // As of recent data, there are 12.
+                },
+                {
+                    question: "What does the 'M' in MIST stand for?",
+                    options: ["Modern", "Mirpur", "Military", "Metropolitan"],
+                    answer: 2
+                },
+                {
+                    question: "Which department was among the first to be established at MIST?",
+                    options: ["Computer Science & Engineering", "Civil Engineering", "Mechanical Engineering", "Electrical & Electronic Engineering"],
+                    answer: 1
+                },
+                {
+                    question: "What is the name of MIST's annual national tech festival?",
+                    options: ["TechFiesta", "Cognition", "Innovision", "MISTECH"],
+                    answer: 3
+                },
+                {
+                    question: "Who is the head of the institution MIST?",
+                    options: ["Principal", "Director General", "Commandant", "Vice Chancellor"],
+                    answer: 2
+                },
+                {
+                    question: "Which faculty does the Aeronautical Engineering (AE) department belong to?",
+                    options: ["Faculty of CE", "Faculty of ME", "Faculty of ECE", "Faculty of Science & Engineering"],
+                    answer: 1
+                }
+            ];
+
+            // State variables
+            let currentQuestionIndex = 0;
+            let userAnswers = new Array(quizData.length).fill(null);
+            let score = 0;
+            let timerInterval;
+            let secondsElapsed = 0;
+
+            // Functions
+            function startTimer() {
+                secondsElapsed = 0;
+                timerInterval = setInterval(() => {
+                    secondsElapsed++;
+                    const minutes = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                    const seconds = (secondsElapsed % 60).toString().padStart(2, '0');
+                    timerEl.textContent = `Time: ${minutes}:${seconds}`;
+                }, 1000);
+            }
+            
+            function stopTimer() {
+                clearInterval(timerInterval);
+            }
+
+            function startQuiz() {
+                startScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    startScreen.classList.add('hidden');
+                    startScreen.classList.remove('fade-out');
+                    quizSection.classList.remove('hidden');
+                    quizSection.classList.add('fade-in');
+                    loadQuestion();
+                    startTimer();
+                }, 500);
+            }
+
+            function loadQuestion() {
+                const currentQuestion = quizData[currentQuestionIndex];
+                questionTextEl.textContent = currentQuestion.question;
+                optionsContainer.innerHTML = '';
+
+                currentQuestion.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.innerHTML = `
+                        <label for="option${index}" class="flex items-center p-4 bg-gray-700/50 border-2 border-transparent rounded-lg cursor-pointer hover:bg-gray-700 transition-colors duration-300 has-[:checked]:border-cyan-500 has-[:checked]:bg-gray-700">
+                            <input type="radio" id="option${index}" name="option" value="${index}" class="hidden">
+                            <span class="w-5 h-5 mr-4 border-2 border-gray-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="w-2.5 h-2.5 bg-cyan-500 rounded-full hidden"></span>
+                            </span>
+                            <span class="text-gray-200">${option}</span>
+                        </label>
+                    `;
+                    optionsContainer.appendChild(optionElement);
+                    
+                    const radio = optionElement.querySelector(`#option${index}`);
+                    const checkmark = optionElement.querySelector('.w-2-5.h-2-5'); // second span
+                    
+                    radio.addEventListener('change', () => {
+                         document.querySelectorAll('input[name="option"]').forEach(r => {
+                            const lbl = r.closest('label');
+                            const chk = lbl.querySelector('.w-2-5.h-2-5');
+                            if(chk) chk.classList.add('hidden');
+                         });
+                         if (radio.checked) {
+                            checkmark.classList.remove('hidden');
+                         }
+                    });
+                });
+
+                // Restore selected answer if exists
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    const savedAnswerRadio = document.querySelector(`#option${userAnswers[currentQuestionIndex]}`);
+                    if(savedAnswerRadio) {
+                       savedAnswerRadio.checked = true;
+                       const checkmark = savedAnswerRadio.closest('label').querySelector('.w-2-5.h-2-5');
+                       if (checkmark) checkmark.classList.remove('hidden');
+                    }
+                }
+                
+                updateQuizState();
+            }
+            
+            function updateQuizState() {
+                questionNumberEl.textContent = currentQuestionIndex + 1;
+                totalQuestionsEl.textContent = quizData.length;
+                
+                const progressPercentage = ((currentQuestionIndex + 1) / quizData.length) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                
+                prevBtn.disabled = currentQuestionIndex === 0;
+                
+                if (currentQuestionIndex === quizData.length - 1) {
+                    nextBtn.textContent = 'Submit';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+            
+            function goToNextQuestion() {
+                const selectedOption = document.querySelector('input[name="option"]:checked');
+                if (selectedOption) {
+                    userAnswers[currentQuestionIndex] = parseInt(selectedOption.value);
+                } else {
+                    // To proceed without answering, we store null
+                    userAnswers[currentQuestionIndex] = null; 
+                }
+
+                if (currentQuestionIndex < quizData.length - 1) {
+                    currentQuestionIndex++;
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }
+
+            function goToPrevQuestion() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    loadQuestion();
+                }
+            }
+
+            function showResults() {
+                stopTimer();
+                score = 0;
+                userAnswers.forEach((answer, index) => {
+                    if (answer === quizData[index].answer) {
+                        score++;
+                    }
+                });
+
+                const percentage = Math.round((score / quizData.length) * 100);
+
+                quizSection.classList.add('fade-out');
+                setTimeout(() => {
+                    quizSection.classList.add('hidden');
+                    quizSection.classList.remove('fade-out');
+                    resultScreen.classList.remove('hidden');
+                    resultScreen.classList.add('fade-in');
+
+                    // Set result text
+                    correctAnswersEl.textContent = score;
+                    totalQuestionsResultEl.textContent = quizData.length;
+                    const minutes = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                    const seconds = (secondsElapsed % 60).toString().padStart(2, '0');
+                    timeTakenEl.textContent = `${minutes}:${seconds}`;
+
+                    if (percentage >= 90) {
+                        resultTitle.textContent = "Certified MISTIAN!";
+                        resultSubtitle.textContent = "Your knowledge is unparalleled. True expert!";
+                    } else if (percentage >= 70) {
+                        resultTitle.textContent = "Excellent Score!";
+                        resultSubtitle.textContent = "You know MIST very well. Great job!";
+                    } else if (percentage >= 50) {
+                        resultTitle.textContent = "Good Effort!";
+                        resultSubtitle.textContent = "A solid performance. You're familiar with MIST.";
+                    } else {
+                        resultTitle.textContent = "Room to Grow!";
+                        resultSubtitle.textContent = "A good start, but there's more to learn about MIST.";
+                    }
+                    
+                    // Animate score circle
+                    const circumference = 2 * Math.PI * 45; // 2 * pi * r
+                    const offset = circumference - (percentage / 100) * circumference;
+                    scoreCircle.style.strokeDashoffset = offset;
+                    
+                    // Animate score text
+                    let currentPercent = 0;
+                    const interval = setInterval(() => {
+                        if (currentPercent >= percentage) {
+                            clearInterval(interval);
+                            scoreText.textContent = `${percentage}%`;
+                        } else {
+                            currentPercent++;
+                            scoreText.textContent = `${currentPercent}%`;
+                        }
+                    }, 20);
+
+                }, 500);
+            }
+
+            function restartQuiz() {
+                currentQuestionIndex = 0;
+                userAnswers.fill(null);
+                score = 0;
+                secondsElapsed = 0;
+                timerEl.textContent = `Time: 00:00`;
+                
+                resultScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    resultScreen.classList.add('hidden');
+                    resultScreen.classList.remove('fade-out');
+                    startScreen.classList.remove('hidden');
+                    startScreen.classList.add('fade-in');
+                }, 500);
+            }
+
+            // Event Listeners
+            startQuizBtn.addEventListener('click', startQuiz);
+            nextBtn.addEventListener('click', goToNextQuestion);
+            prevBtn.addEventListener('click', goToPrevQuestion);
+            restartQuizBtn.addEventListener('click', restartQuiz);
+        });
+    </script>
+</body>
+</html>
